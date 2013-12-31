@@ -1,0 +1,101 @@
+﻿h1, h2, h3, h4, h5, h6, a, p {
+    font-family: 'Segoe UI';
+}
+
+.icon {
+    width: 16px;
+    height: 16px;
+    display: inline-block;
+    vertical-align: text-top;
+    margin: 2px;
+}
+
+.icon-up {
+    background-image: url('up.png');
+}
+
+.icon-down {
+    background-image: url('down.png');
+}
+
+.icon-task {
+    background-image: url('task.png');
+}
+
+.icon-delete {
+    background-image: url('delete.png');
+}
+
+.icon-job {
+    background-image: url('job.png');
+}
+
+.icon-glyph-72 {
+    background-image: url('method.png');
+}
+
+.icon-glyph-74 {
+    background-image: url('static-method.png');
+}
+
+.icon-glyph-102 {
+    background-image: url('property.png');
+}
+
+.icon-glyph-42 {
+    background-image: url('property.png');
+}
+
+.icon-glyph-6 {
+    background-image: url('static-property.png');
+}
+
+.icon-glyph-90 {
+    background-image: url('namespace.png');
+}
+
+.icon-glyph-84 {
+    background-image: url('class.png');
+}
+
+.icon-glyph-0 {
+    background-image: url('class.png');
+}
+
+.icon-glyph-48 {
+    background-image: url('interface.png');
+}
+
+.icon-glyph-12 {
+    background-image: url('delegate.png');
+}
+
+.icon-glyph-108 {
+    background-image: url('struct.png');
+}
+
+.icon-glyph-18 {
+    background-image: url('enum.png');
+}
+
+.icon-glyph-30 {
+    background-image: url('event.png');
+}
+
+#interactive {
+    white-space: pre;
+    background-color: #E6E7E8;
+    color: black;
+    font-family: Consolas;
+    width: 100%;
+    height: 100%;
+}
+
+#editor, #sourceEditor {
+    width: 100%;
+    height: 200px;
+}
+
+.type {
+    color: #003ca7;
+}

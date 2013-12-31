@@ -1,0 +1,69 @@
+﻿@section scripts
+{
+    <script>
+        $(function ()
+        {
+            var sourceEditor = ace.edit('sourceEditor');
+            sourceEditor.getSession().setMode("ace/mode/javascript");
+        });
+    </script>
+
+    <script>
+        $(function ()
+        {
+            // setup the ACE editor with fsharp mode
+            var editor = ace.edit('editor');
+            editor.getSession().setMode("ace/mode/fsharp");
+            editor.focus();
+
+            // get an instance of the Intellisense object
+            var Intellisense = ace.require('ace/intellisense').Intellisense;
+
+            // request declarations from the server
+            new Intellisense(editor, function (callback, position)
+            {
+                var url = '/api/intellisense'
+                    + '?lineIndex=' + escape(position.row)
+                    + '&colIndex=' + escape(position.column)
+                    + '&source=' + escape(editor.getValue());
+
+                $.getJSON(url, function (data)
+                {
+                    callback(data);
+                });
+            });
+        });
+    </script>
+}
+
+<h1>JQuery Web API Implementation</h1>
+<p>This is the Web API implementation for intellisense</p>
+
+<h2>FSharp Editor</h2>
+<div id="editor"></div>
+
+<h2>JavaScript</h2>
+<div id="sourceEditor">$(function ()
+{
+    // setup the ACE editor with fsharp mode
+    var editor = ace.edit('editor');
+    editor.getSession().setMode("ace/mode/fsharp");
+    editor.focus();
+
+    // get an instance of the Intellisense object
+    var Intellisense = ace.require('ace/intellisense').Intellisense;
+
+    // request declarations from the server
+    new Intellisense(editor, function (callback, position)
+    {
+        var url = '/api/intellisense'
+            + '?lineIndex=' + escape(position.row)
+            + '&colIndex=' + escape(position.column)
+            + '&source=' + escape(editor.getValue());
+
+        $.getJSON(url, function (data)
+        {
+            callback(data);
+        });
+    });
+});</div>

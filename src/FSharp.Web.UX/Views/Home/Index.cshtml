@@ -1,0 +1,107 @@
+﻿@section scripts
+{
+    <script>
+        $(function ()
+        {
+            var sourceEditor = ace.edit('sourceEditor');
+            sourceEditor.getSession().setMode("ace/mode/javascript");
+        });
+    </script>
+
+    <script>
+        $(function ()
+        {
+            // setup signalr stuff
+            var interactiveSession = $.connection.interactiveSessionHub;
+            $.connection.hub.start()
+                .fail(function (ex)
+                {
+                    alert('Unable to connect to signalr: ' + ex.message)
+                });
+
+            // setup the ACE editor with fsharp mode
+            var editor = ace.edit('editor');
+            editor.getSession().setMode("ace/mode/fsharp");
+            editor.focus();
+
+            // get an instance of the Intellisense object
+            var Intellisense = ace.require('ace/intellisense').Intellisense;
+
+            // this will be a reference to the callback that the intellisense provider is expecting
+            // to be called when declarations are sent from the server to the client, we need this because
+            // we are using signalr and not regular web api calls
+            var callback = null;
+
+            // called by the server whenever intellisense declarations are ready
+            interactiveSession.client.sendDeclarations = function (declarations)
+            {
+                if (declarations.length > 0)
+                {
+                    var newDeclarations = declarations.map(function (item)
+                    {
+                        return { name: item.Name, glyph: item.Glyph, documentation: item.Documentation };
+                    });
+                    callback(newDeclarations);
+                }
+            };
+
+            // request declarations from the server
+            new Intellisense(editor, function (cb, position)
+            {
+                callback = cb;
+                interactiveSession.server.getDeclarations(editor.getValue(), position.row, position.column);
+            });
+        });
+    </script>
+}
+
+<h1>SignalR Implementation</h1>
+<p>This is the SignalR implementation for intellisense</p>
+
+<h2>FSharp Editor</h2>
+<div id="editor"></div>
+
+<h2>JavaScript</h2>
+<div id="sourceEditor">$(function ()
+{
+    // setup signalr stuff
+    var interactiveSession = $.connection.interactiveSessionHub;
+    $.connection.hub.start()
+        .fail(function (ex)
+        {
+            alert('Unable to connect to signalr: ' + ex.message)
+        });
+
+    // setup the ACE editor with fsharp mode
+    var editor = ace.edit('editor');
+    editor.getSession().setMode("ace/mode/fsharp");
+    editor.focus();
+
+    // get an instance of the Intellisense object
+    var Intellisense = ace.require('ace/intellisense').Intellisense;
+
+    // this will be a reference to the callback that the intellisense provider is expecting
+    // to be called when declarations are sent from the server to the client, we need this because
+    // we are using signalr and not regular web api calls
+    var callback = null;
+
+    // called by the server whenever intellisense declarations are ready
+    interactiveSession.client.sendDeclarations = function (declarations)
+    {
+        if (declarations.length > 0)
+        {
+            var newDeclarations = declarations.map(function (item)
+            {
+                return { name: item.Name, glyph: item.Glyph, documentation: item.Documentation };
+            });
+            callback(newDeclarations);
+        }
+    };
+
+    // request declarations from the server
+    new Intellisense(editor, function (cb, position)
+    {
+        callback = cb;
+        interactiveSession.server.getDeclarations(editor.getValue(), position.row, position.column);
+    });
+});</div>

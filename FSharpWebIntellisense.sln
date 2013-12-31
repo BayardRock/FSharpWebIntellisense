@@ -1,0 +1,74 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.21005.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "BayardRock.FSharpWeb.Intellisense", "src\FSharp.Web.Intellisense\BayardRock.FSharpWeb.Intellisense.fsproj", "{96305D82-A098-4EE3-8E77-5F16F8136AD7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BayardRock.FSharpWeb.Intellisense.UX", "src\FSharp.Web.UX\BayardRock.FSharpWeb.Intellisense.UX.csproj", "{CF01889D-143B-41F7-9864-171B52C65E59}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{CAE26C94-F277-4024-93D0-BC3D0221D76D}"
+	ProjectSection(SolutionItems) = preProject
+		.nuget\NuGet.Config = .nuget\NuGet.Config
+		.nuget\NuGet.exe = .nuget\NuGet.exe
+		.nuget\NuGet.targets = .nuget\NuGet.targets
+		.nuget\packages.config = .nuget\packages.config
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{9C4692B9-BA8B-494B-BDF1-5F0ADF8767F6}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "project", "project", "{8B30009C-0475-4AAD-AF7F-3BA1BFF17CE9}"
+	ProjectSection(SolutionItems) = preProject
+		README.md = README.md
+		RELEASE_NOTES.md = RELEASE_NOTES.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{78174313-FE93-4833-9F28-8F04E8C9E81B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "content", "content", "{31221411-1324-43FE-B30F-424882F61FBD}"
+	ProjectSection(SolutionItems) = preProject
+		docs\content\index.fsx = docs\content\index.fsx
+		docs\content\tutorial.fsx = docs\content\tutorial.fsx
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tools", "tools", "{6CECAB81-EC2A-4E98-9821-AD0F0E030307}"
+	ProjectSection(SolutionItems) = preProject
+		docs\tools\generate.fsx = docs\tools\generate.fsx
+	EndProjectSection
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "BayardRock.FSharpWeb.Tests", "tests\BayardRock.FSharpWeb.Tests\BayardRock.FSharpWeb.Tests.fsproj", "{F8CBDEEE-3EF6-416C-970C-DE26C7E38E3F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "files", "files", "{03F6C30E-AE52-4013-AADD-E96F6E781795}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "img", "img", "{E69EA50E-5D55-40FF-805E-0286345BE0FC}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{96305D82-A098-4EE3-8E77-5F16F8136AD7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{96305D82-A098-4EE3-8E77-5F16F8136AD7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{96305D82-A098-4EE3-8E77-5F16F8136AD7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{96305D82-A098-4EE3-8E77-5F16F8136AD7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CF01889D-143B-41F7-9864-171B52C65E59}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CF01889D-143B-41F7-9864-171B52C65E59}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CF01889D-143B-41F7-9864-171B52C65E59}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CF01889D-143B-41F7-9864-171B52C65E59}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F8CBDEEE-3EF6-416C-970C-DE26C7E38E3F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F8CBDEEE-3EF6-416C-970C-DE26C7E38E3F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F8CBDEEE-3EF6-416C-970C-DE26C7E38E3F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F8CBDEEE-3EF6-416C-970C-DE26C7E38E3F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{31221411-1324-43FE-B30F-424882F61FBD} = {9C4692B9-BA8B-494B-BDF1-5F0ADF8767F6}
+		{6CECAB81-EC2A-4E98-9821-AD0F0E030307} = {9C4692B9-BA8B-494B-BDF1-5F0ADF8767F6}
+		{03F6C30E-AE52-4013-AADD-E96F6E781795} = {9C4692B9-BA8B-494B-BDF1-5F0ADF8767F6}
+		{F8CBDEEE-3EF6-416C-970C-DE26C7E38E3F} = {78174313-FE93-4833-9F28-8F04E8C9E81B}
+		{E69EA50E-5D55-40FF-805E-0286345BE0FC} = {03F6C30E-AE52-4013-AADD-E96F6E781795}
+	EndGlobalSection
+EndGlobal
