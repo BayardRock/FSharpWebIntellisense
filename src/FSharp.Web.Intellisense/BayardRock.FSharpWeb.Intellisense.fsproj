@@ -32,6 +32,26 @@
     <WarningLevel>3</WarningLevel>
     <DocumentationFile>bin\Release\FSharp.Web.Intellisense.XML</DocumentationFile>
   </PropertyGroup>
+  <PropertyGroup>
+    <MinimumVisualStudioVersion Condition="'$(MinimumVisualStudioVersion)' == ''">11</MinimumVisualStudioVersion>
+  </PropertyGroup>
+  <Choose>
+    <When Condition="'$(VisualStudioVersion)' == '11.0'">
+      <PropertyGroup Condition="Exists('$(MSBuildExtensionsPath32)\..\Microsoft SDKs\F#\3.0\Framework\v4.0\Microsoft.FSharp.Targets')">
+        <FSharpTargetsPath>$(MSBuildExtensionsPath32)\..\Microsoft SDKs\F#\3.0\Framework\v4.0\Microsoft.FSharp.Targets</FSharpTargetsPath>
+      </PropertyGroup>
+    </When>
+    <Otherwise>
+      <PropertyGroup Condition="Exists('$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\FSharp\Microsoft.FSharp.Targets')">
+        <FSharpTargetsPath>$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\FSharp\Microsoft.FSharp.Targets</FSharpTargetsPath>
+      </PropertyGroup>
+    </Otherwise>
+  </Choose>
+  <Import Project="$(FSharpTargetsPath)" />
+  <ItemGroup>
+    <Compile Include="IntellisenseHelper.fs" />
+    <None Include="Scratch.fsx" />
+  </ItemGroup>
   <ItemGroup>
     <Reference Include="FSharp.Compiler">
       <HintPath>..\..\lib\FSharp.Compiler.dll</HintPath>
@@ -53,25 +73,6 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Numerics" />
   </ItemGroup>
-  <ItemGroup>
-    <Compile Include="IntellisenseHelper.fs" />
-  </ItemGroup>
-  <PropertyGroup>
-    <MinimumVisualStudioVersion Condition="'$(MinimumVisualStudioVersion)' == ''">11</MinimumVisualStudioVersion>
-  </PropertyGroup>
-  <Choose>
-    <When Condition="'$(VisualStudioVersion)' == '11.0'">
-      <PropertyGroup Condition="Exists('$(MSBuildExtensionsPath32)\..\Microsoft SDKs\F#\3.0\Framework\v4.0\Microsoft.FSharp.Targets')">
-        <FSharpTargetsPath>$(MSBuildExtensionsPath32)\..\Microsoft SDKs\F#\3.0\Framework\v4.0\Microsoft.FSharp.Targets</FSharpTargetsPath>
-      </PropertyGroup>
-    </When>
-    <Otherwise>
-      <PropertyGroup Condition="Exists('$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\FSharp\Microsoft.FSharp.Targets')">
-        <FSharpTargetsPath>$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\FSharp\Microsoft.FSharp.Targets</FSharpTargetsPath>
-      </PropertyGroup>
-    </Otherwise>
-  </Choose>
-  <Import Project="$(FSharpTargetsPath)" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
