@@ -2,34 +2,6 @@
     font-family: 'Segoe UI';
 }
 
-.icon {
-    width: 16px;
-    height: 16px;
-    display: inline-block;
-    vertical-align: text-top;
-    margin: 2px;
-}
-
-.icon-up {
-    background-image: url('up.png');
-}
-
-.icon-down {
-    background-image: url('down.png');
-}
-
-.icon-task {
-    background-image: url('task.png');
-}
-
-.icon-delete {
-    background-image: url('delete.png');
-}
-
-.icon-job {
-    background-image: url('job.png');
-}
-
 .icon-glyph-72 {
     background-image: url('method.png');
 }

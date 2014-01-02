@@ -185,13 +185,10 @@
     <Content Include="Content\delete.png" />
     <Content Include="Content\enum.png" />
     <Content Include="Content\interface.png" />
-    <Content Include="Content\job.png" />
-    <Content Include="Content\menu-bg.png" />
     <Content Include="Content\method.png" />
     <Content Include="Content\namespace.png" />
     <Content Include="Content\property.png" />
     <Content Include="Content\struct.png" />
-    <Content Include="Content\task.png" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Scripts\ace\ace.js" />
@@ -221,19 +218,6 @@
       <DependentUpon>Web.config</DependentUpon>
     </Content>
     <Content Include="Content\site.css" />
-    <Content Include="Images\accent.png" />
-    <Content Include="Images\bullet.png" />
-    <Content Include="Images\heroAccent.png" />
-    <Content Include="Images\orderedList0.png" />
-    <Content Include="Images\orderedList1.png" />
-    <Content Include="Images\orderedList2.png" />
-    <Content Include="Images\orderedList3.png" />
-    <Content Include="Images\orderedList4.png" />
-    <Content Include="Images\orderedList5.png" />
-    <Content Include="Images\orderedList6.png" />
-    <Content Include="Images\orderedList7.png" />
-    <Content Include="Images\orderedList8.png" />
-    <Content Include="Images\orderedList9.png" />
     <Content Include="Scripts\_references.js" />
     <Content Include="Views\Web.config" />
     <Content Include="Views\_ViewStart.cshtml" />
