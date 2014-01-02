@@ -4,7 +4,7 @@ ace.define('ace/intellisense',
     {
         var cssText = 
 ".br-intellisense {"+
-"    width: 220px;"+
+"    min-width: 220px;"+
 "    max-height: 176px;"+
 "    min-height: 22px;"+
 "    z-index: 10;"+
@@ -37,7 +37,9 @@ ace.define('ace/intellisense',
 "    font-size: 10pt;"+
 "    list-style: none;"+
 "    cursor: pointer;"+
-"    border: 1px solid white;"+
+"    border: 1px solid white;" +
+"    white-space: nowrap;" +
+"    overflow: hidden;" +
 "}"+
 ".br-listlink:hover {"+
 "    background-color: #FDF4BF;"+
@@ -259,7 +261,10 @@ ace.define('ace/intellisense',
             editor.commands.on("afterExec", function (e)
             {
                 // hide autocomplete when the user navigates using keyboard
-                if (e.command.name.indexOf('goto') === 0 || e.command.name.indexOf('select') === 0)
+                if (e.command.name.indexOf('goto') === 0
+                    || e.command.name.indexOf('select') === 0
+                    || e.command.name.indexOf('removeword') === 0
+                    )
                 {
                     self.showAutoComplete(false);
                 }
