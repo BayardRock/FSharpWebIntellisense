@@ -9,48 +9,73 @@
     </script>
 
     <script>
+
+    </script>
+
+    <script>
         $(function ()
         {
-            // setup signalr stuff
-            var interactiveSession = $.connection.interactiveSessionHub;
             $.connection.hub.start()
+                .done(function()
+                {
+                    var interactiveSession = $.connection.interactiveSessionHub;
+
+                    // setup the ACE editor with fsharp mode
+                    var editor = ace.edit('editor');
+                    editor.getSession().setMode("ace/mode/fsharp");
+                    editor.focus();
+
+                    // get an instance of the Intellisense object
+                    var Intellisense = ace.require('ace/intellisense').Intellisense;
+                    var Compiler = ace.require('ace/compiler').Compiler;
+
+                    // this will be a reference to the callback that the intellisense provider is expecting
+                    // to be called when declarations are sent from the server to the client, we need this because
+                    // we are using signalr and not regular web api calls
+                    var intellisenseCallback = null;
+                    var compileCallback = null;
+
+                    // called by the server whenever intellisense declarations are ready
+                    interactiveSession.client.sendDeclarations = function (declarations)
+                    {
+                        if (declarations.length > 0)
+                        {
+                            var newDeclarations = declarations.map(function (item)
+                            {
+                                return { name: item.Name, glyph: item.Glyph, documentation: item.Documentation };
+                            });
+                            intellisenseCallback(newDeclarations);
+                        }
+                    };
+
+                    // called by the server whenever errors are ready
+                    interactiveSession.client.sendErrors = function (errors)
+                    {
+                        var newErrors = errors.map(function (item)
+                        {
+                            return { startLine: item.StartLine, startColumn: item.StartColumn, endLine: item.EndLine, endColumn: item.EndColumn, message: item.Message };
+                        });
+                        compileCallback(newErrors);
+                    };
+
+                    // request errors from the server
+                    new Compiler(editor, function (cb)
+                    {
+                        compileCallback = cb;
+                        interactiveSession.server.compile(editor.getValue());
+                    });
+
+                    // request declarations from the server
+                    new Intellisense(editor, function (cb, position)
+                    {
+                        intellisenseCallback = cb;
+                        interactiveSession.server.getDeclarations(editor.getValue(), position.row, position.column);
+                    });
+                })
                 .fail(function (ex)
                 {
                     alert('Unable to connect to signalr: ' + ex.message)
                 });
-
-            // setup the ACE editor with fsharp mode
-            var editor = ace.edit('editor');
-            editor.getSession().setMode("ace/mode/fsharp");
-            editor.focus();
-
-            // get an instance of the Intellisense object
-            var Intellisense = ace.require('ace/intellisense').Intellisense;
-
-            // this will be a reference to the callback that the intellisense provider is expecting
-            // to be called when declarations are sent from the server to the client, we need this because
-            // we are using signalr and not regular web api calls
-            var callback = null;
-
-            // called by the server whenever intellisense declarations are ready
-            interactiveSession.client.sendDeclarations = function (declarations)
-            {
-                if (declarations.length > 0)
-                {
-                    var newDeclarations = declarations.map(function (item)
-                    {
-                        return { name: item.Name, glyph: item.Glyph, documentation: item.Documentation };
-                    });
-                    callback(newDeclarations);
-                }
-            };
-
-            // request declarations from the server
-            new Intellisense(editor, function (cb, position)
-            {
-                callback = cb;
-                interactiveSession.server.getDeclarations(editor.getValue(), position.row, position.column);
-            });
         });
     </script>
 }
@@ -62,15 +87,10 @@
 <div id="editor"></div>
 
 <h2>JavaScript</h2>
-<div id="sourceEditor">$(function ()
+<div id="sourceEditor">$.connection.hub.start()
+.done(function()
 {
-    // setup signalr stuff
     var interactiveSession = $.connection.interactiveSessionHub;
-    $.connection.hub.start()
-        .fail(function (ex)
-        {
-            alert('Unable to connect to signalr: ' + ex.message)
-        });
 
     // setup the ACE editor with fsharp mode
     var editor = ace.edit('editor');
@@ -79,11 +99,13 @@
 
     // get an instance of the Intellisense object
     var Intellisense = ace.require('ace/intellisense').Intellisense;
+    var Compiler = ace.require('ace/compiler').Compiler;
 
     // this will be a reference to the callback that the intellisense provider is expecting
     // to be called when declarations are sent from the server to the client, we need this because
     // we are using signalr and not regular web api calls
-    var callback = null;
+    var intellisenseCallback = null;
+    var compileCallback = null;
 
     // called by the server whenever intellisense declarations are ready
     interactiveSession.client.sendDeclarations = function (declarations)
@@ -94,14 +116,30 @@
             {
                 return { name: item.Name, glyph: item.Glyph, documentation: item.Documentation };
             });
-            callback(newDeclarations);
+            intellisenseCallback(newDeclarations);
         }
     };
+
+    // called by the server whenever errors are ready
+    interactiveSession.client.sendErrors = function (errors)
+    {
+        var newErrors = errors.map(function (item)
+        {
+            return { startLine: item.StartLine, startColumn: item.StartColumn, endLine: item.EndLine, endColumn: item.EndColumn, message: item.Message };
+        });
+        compileCallback(newErrors);
+    };
+
+    // request errors from the server
+    new Compiler(editor, function (cb)
+    {
+        compileCallback = cb;
+        interactiveSession.server.compile(editor.getValue());
+    });
 
     // request declarations from the server
     new Intellisense(editor, function (cb, position)
     {
-        callback = cb;
+        intellisenseCallback = cb;
         interactiveSession.server.getDeclarations(editor.getValue(), position.row, position.column);
-    });
-});</div>
+    });</div>

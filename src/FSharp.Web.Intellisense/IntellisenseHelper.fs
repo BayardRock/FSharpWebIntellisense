@@ -9,9 +9,9 @@ module IntellisenseHelper =
     open Microsoft.FSharp.Compiler.SourceCodeServices
 
     // Create an interactive checker instance (ignore notifications)
-    let checker = InteractiveChecker.Create(NotifyFileTypeCheckStateIsDirty ignore)
+    let internal checker = InteractiveChecker.Create(NotifyFileTypeCheckStateIsDirty ignore)
 
-    let parseWithTypeInfo (file, input) = 
+    let internal parseWithTypeInfo (file, input) = 
     
         // We first need to get the untyped info
         let checkOptions = checker.GetCheckOptionsFromScriptRoot(file, input, DateTime.Now, [| |])
@@ -30,7 +30,7 @@ module IntellisenseHelper =
 
         waitForTypeCheck 0 |> Async.RunSynchronously
 
-    let extractNames (line : string) (charIndex : int) =
+    let internal extractNames (line : string) (charIndex : int) =
         if (charIndex > 2) then
             let find = line.LastIndexOfAny([| ' '; '\t'; '\r'; |], (charIndex - 2))
             let start = find + 1
@@ -42,7 +42,7 @@ module IntellisenseHelper =
         else
             []
 
-    let buildFormatComment (xmlCommentRetriever: string * string -> string) cmt (sb: StringBuilder) =
+    let internal buildFormatComment (xmlCommentRetriever: string * string -> string) cmt (sb: StringBuilder) =
         match cmt with
         | XmlCommentText(s) -> sb.AppendLine(s) |> ignore
         | XmlCommentSignature(file, signature) ->
@@ -50,7 +50,7 @@ module IntellisenseHelper =
             if (not (comment.Equals(null))) && comment.Length > 0 then sb.AppendLine(comment) |> ignore
         | XmlCommentNone -> ()
 
-    let buildFormatElement isSingle el (sb: StringBuilder) xmlCommentRetriever =
+    let internal buildFormatElement isSingle el (sb: StringBuilder) xmlCommentRetriever =
         match el with
         | DataTipElementNone -> ()
         | DataTipElement(it, comment) ->
@@ -70,13 +70,16 @@ module IntellisenseHelper =
             sb.Append("Composition error: " + err) |> ignore
 
     // Convert DataTipText to string
-    let formatTip tip xmlCommentRetriever =
+    let internal formatTip tip xmlCommentRetriever =
         let commentRetriever = defaultArg xmlCommentRetriever (fun _ -> "")
         let sb = new StringBuilder()
         match tip with
         | DataTipText([single]) -> buildFormatElement true single sb commentRetriever
         | DataTipText(its) -> for item in its do buildFormatElement false item sb commentRetriever
         sb.ToString().Trim('\n', '\r')
+
+    let Compile (source:string) =
+        parseWithTypeInfo ("/home/user/Test.fsx", source)
 
     let GetDeclarations (source:string) (lineIndex, charIndex) =
 

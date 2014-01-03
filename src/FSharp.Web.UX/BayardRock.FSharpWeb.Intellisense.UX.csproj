@@ -172,6 +172,7 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\CompileController.cs" />
     <Compile Include="Controllers\IntellisenseController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -192,6 +193,8 @@
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Scripts\ace\ace.js" />
+    <Content Include="Scripts\ace\worker-javascript.js" />
+    <Content Include="Scripts\ace\ext-compiler.js" />
     <Content Include="Scripts\ace\ext-intellisense.js" />
     <Content Include="Scripts\ace\ext-language_tools.js" />
     <Content Include="Scripts\ace\mode-fsharp.js" />

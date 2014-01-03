@@ -264,6 +264,7 @@ ace.define('ace/intellisense',
                 if (e.command.name.indexOf('goto') === 0
                     || e.command.name.indexOf('select') === 0
                     || e.command.name.indexOf('removeword') === 0
+                    || e.command.name.indexOf('backspace') === 0
                     )
                 {
                     self.showAutoComplete(false);

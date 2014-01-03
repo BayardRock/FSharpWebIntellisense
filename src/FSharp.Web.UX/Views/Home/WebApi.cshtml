@@ -18,6 +18,17 @@
 
             // get an instance of the Intellisense object
             var Intellisense = ace.require('ace/intellisense').Intellisense;
+            var Compiler = ace.require('ace/compiler').Compiler;
+
+            // request compilation information from the server
+            new Compiler(editor, function (callback)
+            {
+                var url = '/api/compile?source=' + escape(editor.getValue());
+                $.getJSON(url, function (data)
+                {
+                    callback(data);
+                });
+            });
 
             // request declarations from the server
             new Intellisense(editor, function (callback, position)
@@ -43,27 +54,35 @@
 <div id="editor"></div>
 
 <h2>JavaScript</h2>
-<div id="sourceEditor">$(function ()
+<div id="sourceEditor">// setup the ACE editor with fsharp mode
+var editor = ace.edit('editor');
+editor.getSession().setMode("ace/mode/fsharp");
+editor.focus();
+
+// get an instance of the Intellisense object
+var Intellisense = ace.require('ace/intellisense').Intellisense;
+var Compiler = ace.require('ace/compiler').Compiler;
+
+// request compilation information from the server
+new Compiler(editor, function (callback)
 {
-    // setup the ACE editor with fsharp mode
-    var editor = ace.edit('editor');
-    editor.getSession().setMode("ace/mode/fsharp");
-    editor.focus();
-
-    // get an instance of the Intellisense object
-    var Intellisense = ace.require('ace/intellisense').Intellisense;
-
-    // request declarations from the server
-    new Intellisense(editor, function (callback, position)
+    var url = '/api/compile?source=' + escape(editor.getValue());
+    $.getJSON(url, function (data)
     {
-        var url = '/api/intellisense'
-            + '?lineIndex=' + escape(position.row)
-            + '&colIndex=' + escape(position.column)
-            + '&source=' + escape(editor.getValue());
+        callback(data);
+    });
+});
 
-        $.getJSON(url, function (data)
-        {
-            callback(data);
-        });
+// request declarations from the server
+new Intellisense(editor, function (callback, position)
+{
+    var url = '/api/intellisense'
+        + '?lineIndex=' + escape(position.row)
+        + '&colIndex=' + escape(position.column)
+        + '&source=' + escape(editor.getValue());
+
+    $.getJSON(url, function (data)
+    {
+        callback(data);
     });
 });</div>

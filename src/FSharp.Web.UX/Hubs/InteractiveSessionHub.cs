@@ -1,7 +1,6 @@
 ﻿using BayardRock.FSharpWeb.Intellisense.UX.Controllers;
 using Microsoft.AspNet.SignalR;
 using System;
-using System.Linq;
 
 namespace BayardRock.FSharpWeb.Intellisense.UX.Hubs
 {
@@ -16,12 +15,24 @@ namespace BayardRock.FSharpWeb.Intellisense.UX.Hubs
         /// <param name="colIndex">The column that the user is on</param>
         public void GetDeclarations(String source, int lineIndex, int colIndex)
         {
-            var declarations = IntellisenseHelper.GetDeclarations(source, lineIndex, colIndex)
-                .Select(x => new IntellisenseItem(x))
-                .OrderBy(x => x.Name)
-                .ToList();
+            using (var c = new IntellisenseController())
+            {
+                var declarations = c.Get(source, lineIndex, colIndex);
+                Clients.Caller.sendDeclarations(declarations);
+            }
+        }
 
-            Clients.Caller.sendDeclarations(declarations);
+        /// <summary>
+        /// Compiles the specified source and sends errors to the client.
+        /// </summary>
+        /// <param name="source">The source to compile.</param>
+        public void Compile(String source)
+        {
+            using (var c = new CompileController())
+            {
+                var errors = c.Get(source);
+                Clients.Caller.sendErrors(errors);
+            }
         }
     }
 }
