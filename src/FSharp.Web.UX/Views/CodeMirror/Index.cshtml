@@ -1,11 +1,14 @@
-﻿@section scripts
+﻿@section css
 {
-    <script src="~/scripts/ace/ace.js"></script>
-    <script src="~/scripts/ace/ext-language_tools.js"></script>
-    <script src="~/scripts/ace/ext-intellisense.js"></script>
-    <script src="~/scripts/ace/ext-compiler.js"></script>
-    <script src="~/scripts/ace/mode-fsharp.js"></script>
-    <script src="~/scripts/ace/mode-javascript.js"></script>
+    <link href="~/content/codemirror.css" rel="stylesheet" />
+}
+
+@section scripts
+{
+    <script src="~/scripts/codemirror/codemirror.js"></script>
+    <script src="~/scripts/codemirror/codemirror-intellisense.js"></script>
+    <script src="~/scripts/codemirror/codemirror-compiler.js"></script>
+    <script src="~/scripts/codemirror/mode/fsharp.js"></script>
     <script src="~/scripts/jquery.signalR-2.0.0.min.js"></script>
     <script src="~/signalr/hubs"></script>
     <script>
@@ -43,16 +46,18 @@
             };
 
             $.connection.hub.start()
-                .done(function()
+                .done(function (signalr)
                 {
-                    // setup the ACE editor with fsharp mode
-                    var editor = ace.edit('editor');
-                    editor.getSession().setMode("ace/mode/fsharp");
-                    editor.focus();
+                    console.log('done()', signalr);
 
-                    // get an instance of the Intellisense object
-                    var Intellisense = ace.require('ace/intellisense').Intellisense;
-                    var Compiler = ace.require('ace/compiler').Compiler;
+                    // setup the CodeMirror editor with fsharp mode
+                    var editor = CodeMirror(document.getElementById('editor'),
+                    {
+                        value: "let x = 1",
+                        mode: 'fsharp',
+                        lineNumbers: true
+                    });
+                    editor.focus();
 
                     // request errors from the server
                     new Compiler(editor, function (cb)
@@ -65,7 +70,7 @@
                     new Intellisense(editor, function (cb, position)
                     {
                         intellisenseCallback = cb;
-                        interactiveSession.server.getDeclarations(editor.getValue(), position.row, position.column);
+                        interactiveSession.server.getDeclarations(editor.getValue(), position.line, position.ch);
                     });
                 })
                 .fail(function (ex)
@@ -79,5 +84,5 @@
 <h1>SignalR Implementation</h1>
 <p>This is the SignalR implementation for intellisense</p>
 
-<h2>ACE F# Editor</h2>
-<div id="editor" style="border: 1px solid black;"></div>
+<h2>CodeMirror F# Editor</h2>
+<div id="editor"></div>

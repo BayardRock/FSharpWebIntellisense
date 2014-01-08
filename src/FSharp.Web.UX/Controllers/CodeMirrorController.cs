@@ -2,7 +2,7 @@
 
 namespace BayardRock.FSharpWeb.Intellisense.UX.Controllers
 {
-    public class CodeMirrorController : Controller
+    public class HomeController : Controller
     {
         public ActionResult Index()
         {

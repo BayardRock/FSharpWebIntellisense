@@ -171,6 +171,7 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Controllers\CodeMirrorController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\CompileController.cs" />
     <Compile Include="Controllers\IntellisenseController.cs" />
@@ -183,6 +184,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\class.png" />
+    <Content Include="Content\codemirror.css" />
     <Content Include="Content\delete.png" />
     <Content Include="Content\enum.png" />
     <Content Include="Content\interface.png" />
@@ -200,6 +202,10 @@
     <Content Include="Scripts\ace\mode-fsharp.js" />
     <None Include="Scripts\jquery-2.0.3.intellisense.js" />
     <Content Include="Scripts\ace\mode-javascript.js" />
+    <Content Include="Scripts\codemirror\codemirror-intellisense.js" />
+    <Content Include="Scripts\codemirror\codemirror.js" />
+    <Content Include="Scripts\codemirror\codemirror-compiler.js" />
+    <Content Include="Scripts\codemirror\mode\fsharp.js" />
     <Content Include="Scripts\jquery-2.0.3.js" />
     <Content Include="Scripts\jquery-2.0.3.min.js" />
     <Content Include="Scripts\jquery-2.0.3.min.map" />
@@ -228,6 +234,8 @@
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Home\WebApi.cshtml" />
+    <Content Include="Views\CodeMirror\Index.cshtml" />
+    <Content Include="Views\CodeMirror\WebApi.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

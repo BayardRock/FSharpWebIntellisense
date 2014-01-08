@@ -1,13 +1,11 @@
 ﻿@section scripts
 {
-    <script>
-        $(function ()
-        {
-            var sourceEditor = ace.edit('sourceEditor');
-            sourceEditor.getSession().setMode("ace/mode/javascript");
-        });
-    </script>
-
+    <script src="~/scripts/ace/ace.js"></script>
+    <script src="~/scripts/ace/ext-language_tools.js"></script>
+    <script src="~/scripts/ace/ext-intellisense.js"></script>
+    <script src="~/scripts/ace/ext-compiler.js"></script>
+    <script src="~/scripts/ace/mode-fsharp.js"></script>
+    <script src="~/scripts/ace/mode-javascript.js"></script>
     <script>
         $(function ()
         {
@@ -48,41 +46,7 @@
 }
 
 <h1>JQuery Web API Implementation</h1>
-<p>This is the Web API implementation for intellisense</p>
+<p>This is the Web API implementation for intellisense using the ACE editor</p>
 
-<h2>FSharp Editor</h2>
-<div id="editor"></div>
-
-<h2>JavaScript</h2>
-<div id="sourceEditor">// setup the ACE editor with fsharp mode
-var editor = ace.edit('editor');
-editor.getSession().setMode("ace/mode/fsharp");
-editor.focus();
-
-// get an instance of the Intellisense object
-var Intellisense = ace.require('ace/intellisense').Intellisense;
-var Compiler = ace.require('ace/compiler').Compiler;
-
-// request compilation information from the server
-new Compiler(editor, function (callback)
-{
-    var url = '/api/compile?source=' + escape(editor.getValue());
-    $.getJSON(url, function (data)
-    {
-        callback(data);
-    });
-});
-
-// request declarations from the server
-new Intellisense(editor, function (callback, position)
-{
-    var url = '/api/intellisense'
-        + '?lineIndex=' + escape(position.row)
-        + '&colIndex=' + escape(position.column)
-        + '&source=' + escape(editor.getValue());
-
-    $.getJSON(url, function (data)
-    {
-        callback(data);
-    });
-});</div>
+<h2>ACE F# Editor</h2>
+<div id="editor" style="border: 1px solid black;"></div>

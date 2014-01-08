@@ -4,23 +4,18 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width" />
     <title>FSharp Intellisense</title>
-    @Styles.Render("~/Content/css")
+    @Styles.Render("~/content/css")
     @Scripts.Render("~/bundles/jquery")
 
-    <script src="~/scripts/ace/ace.js"></script>
-    <script src="~/scripts/ace/ext-language_tools.js"></script>
-    <script src="~/scripts/ace/ext-intellisense.js"></script>
-    <script src="~/scripts/ace/ext-compiler.js"></script>
-    <script src="~/scripts/ace/mode-fsharp.js"></script>
-    <script src="~/scripts/ace/mode-javascript.js"></script>
-    <script src="~/scripts/jquery.signalR-2.0.0.min.js"></script>
-    <script src="~/signalr/hubs"></script>
+    @RenderSection("css", required: false)
     @RenderSection("scripts", required: false)
 </head>
 <body>
 
-    <a href="~/">SignalR Implementation</a> |
-    <a href="~/home/webapi">Web API Implementation</a>
+    <a href="~/">ACE Editor SignalR Implementation</a> |
+    <a href="~/home/webapi">ACE Editor Web API Implementation</a> |
+    <a href="~/codemirror/">CodeMirror SignalR Implementation</a> |
+    <a href="~/codemirror/webapi">CodeMirror Web API Implementation</a>
 
     @RenderBody()
 </body>

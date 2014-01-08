@@ -1,0 +1,54 @@
+﻿@section css
+{
+    <link href="~/content/codemirror.css" rel="stylesheet" />
+}
+
+@section scripts
+{
+    <script src="~/scripts/codemirror/codemirror.js"></script>
+    <script src="~/scripts/codemirror/codemirror-intellisense.js"></script>
+    <script src="~/scripts/codemirror/codemirror-compiler.js"></script>
+    <script src="~/scripts/codemirror/mode/fsharp.js"></script>
+    <script>
+        $(function ()
+        {
+            var editor = CodeMirror(document.getElementById('editor'),
+			{
+			    value: "let x = 1",
+                mode: 'fsharp',
+                lineNumbers: true
+			});
+            editor.focus();
+
+            // request compilation information from the server
+            new Compiler(editor, function (callback)
+            {
+                var url = '/api/compile?source=' + escape(editor.getValue());
+                $.getJSON(url, function (data)
+                {
+                    callback(data);
+                });
+            });
+
+            // request declarations from the server
+            new Intellisense(editor, function (callback, position)
+            {
+                var url = '/api/intellisense'
+                    + '?lineIndex=' + escape(position.line)
+                    + '&colIndex=' + escape(position.ch)
+                    + '&source=' + escape(editor.getValue());
+
+                $.getJSON(url, function (data)
+                {
+                    callback(data);
+                });
+            });
+        });
+    </script>
+}
+
+<h1>JQuery Web API Implementation</h1>
+<p>This is the Web API implementation for intellisense using the CodeMirror editor</p>
+
+<h2>CodeMirror F# Editor</h2>
+<div id="editor"></div>
