@@ -93,7 +93,8 @@ module IntellisenseHelper =
 
         // get declarations for a location
         let decls = 
-            parsed.GetDeclarations(Some untyped, (lineIndex, charIndex), source, (names, ""), fun _ -> false)
+            parsed.GetDeclarations(Some untyped, lineIndex, charIndex, source, names, "", fun _ -> false)
+            //parsed.GetDeclarations(Some untyped, (lineIndex, charIndex), source, (names, ""), fun _ -> false)
             |> Async.RunSynchronously
     
         decls.Items
@@ -110,7 +111,7 @@ module IntellisenseHelper =
 
         // Get methods for the location
         let names = extractNames (line) (charIndex)
-        let methods = parsed.GetMethods((lineIndex, charIndex), inputLines.[lineIndex], Some names)
+        let methods = parsed.GetMethods(lineIndex, charIndex, inputLines.[lineIndex], Some names)
     
         methods.Methods
         |> Seq.map (fun x -> formatTip x.Description None)
@@ -134,4 +135,4 @@ module IntellisenseHelper =
         let names = extractNames line charIndex
 
         // Get tool tip at the specified location
-        parsed.GetDataTipText((lineIndex, charIndex), line, names, identToken)
+        parsed.GetDataTipText(lineIndex, charIndex, line, names, identToken)

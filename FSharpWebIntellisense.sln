@@ -51,6 +51,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "img", "img", "{E69EA50E-5D5
 		docs\files\img\logo.png = docs\files\img\logo.png
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "lib", "lib", "{EB108155-79F9-4D24-B797-5DD4A9CC5172}"
+	ProjectSection(SolutionItems) = preProject
+		lib\README.md = lib\README.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
