@@ -10,7 +10,7 @@
     <RootNamespace>BayardRock.FSharpWeb.Tests</RootNamespace>
     <AssemblyName>BayardRock.FSharpWeb.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-    <TargetFSharpCoreVersion>4.3.1.0</TargetFSharpCoreVersion>
+    <TargetFSharpCoreVersion>4.3.0.0</TargetFSharpCoreVersion>
     <Name>BayardRock.FSharpWeb.Tests</Name>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\</SolutionDir>
     <RestorePackages>true</RestorePackages>
@@ -55,6 +55,13 @@
     <Compile Include="Tests.fs" />
     <None Include="packages.config" />
     <None Include="app.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\FSharp.Web.Intellisense\BayardRock.FSharpWeb.Intellisense.fsproj">
+      <Name>BayardRock.FSharpWeb.Intellisense</Name>
+      <Project>{96305d82-a098-4ee3-8e77-5f16f8136ad7}</Project>
+      <Private>True</Private>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <MinimumVisualStudioVersion Condition="'$(MinimumVisualStudioVersion)' == ''">11</MinimumVisualStudioVersion>

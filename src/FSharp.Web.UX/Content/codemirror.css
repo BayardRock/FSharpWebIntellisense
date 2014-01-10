@@ -2,7 +2,8 @@
 
 .CodeMirror {
   /* Set height, width, borders, and global font properties here */
-  font-family: monospace;
+  font-family: Monaco, Menlo, 'Ubuntu Mono', Consolas, source-code-pro, monospace;
+  font-size: 12px;
   height: 300px;
   border: 1px solid black;
 }

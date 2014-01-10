@@ -30,17 +30,12 @@ module IntellisenseHelper =
 
         waitForTypeCheck 0 |> Async.RunSynchronously
 
-    let internal extractNames (line : string) (charIndex : int) =
-        if (charIndex > 2) then
-            let find = line.LastIndexOfAny([| ' '; '\t'; '\r'; |], (charIndex - 2))
-            let start = find + 1
-            let len = charIndex - start - 1
-            if start + len > line.Length || len <= 0 then
-                []
-            else
-                line.Substring(start, len).Split('.') |> Seq.toList
-        else
-            []
+    let ExtractNames (line : string) (charIndex : int) =
+        let find = line.LastIndexOfAny([| ' '; '\t'; '\r'; |], Math.Max(charIndex, 1) - 1)
+        let start = find + 1
+        let len = charIndex - start
+        let splits = line.Substring(start, len).Split('.')
+        splits |> Seq.take (splits.Length - 1) |> Seq.toList
 
     let internal buildFormatComment (xmlCommentRetriever: string * string -> string) cmt (sb: StringBuilder) =
         match cmt with
@@ -86,7 +81,7 @@ module IntellisenseHelper =
         let inputLines = source.Split('\n')
         let file = "/home/user/Test.fsx"
         let line = inputLines.[lineIndex]
-        let names = extractNames line charIndex
+        let names = ExtractNames line charIndex
 
         // parse
         let untyped, parsed = parseWithTypeInfo(file, source)
@@ -110,7 +105,7 @@ module IntellisenseHelper =
         let untyped, parsed = parseWithTypeInfo(file, source)
 
         // Get methods for the location
-        let names = extractNames (line) (charIndex)
+        let names = ExtractNames (line) (charIndex)
         let methods = parsed.GetMethods(lineIndex, charIndex, inputLines.[lineIndex], Some names)
     
         methods.Methods
@@ -132,7 +127,7 @@ module IntellisenseHelper =
         let identToken = Parser.tagOfToken(Parser.token.IDENT("")) 
         let untyped, parsed = parseWithTypeInfo(file, source)
         let line = inputLines.[lineIndex]
-        let names = extractNames line charIndex
+        let names = ExtractNames line charIndex
 
         // Get tool tip at the specified location
         parsed.GetDataTipText(lineIndex, charIndex, line, names, identToken)

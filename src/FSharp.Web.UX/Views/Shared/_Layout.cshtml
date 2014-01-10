@@ -11,12 +11,19 @@
     @RenderSection("scripts", required: false)
 </head>
 <body>
+    
+    <div id="cssmenu">
+        <ul>
+            <li><a href="~/"><span>ACE - SignalR</span></a></li>
+            <li><a href="~/home/webapi/"><span>Ace - WebAPI</span></a></li>
+            <li><a href="~/codemirror/"><span>CodeMirror - SignalR</span></a></li>
+            <li class="last"><a href="~/codemirror/webapi/"><span>CodeMirror - WebAPI</span></a></li>
+        </ul>
+    </div>
 
-    <a href="~/">ACE Editor SignalR Implementation</a> |
-    <a href="~/home/webapi">ACE Editor Web API Implementation</a> |
-    <a href="~/codemirror/">CodeMirror SignalR Implementation</a> |
-    <a href="~/codemirror/webapi">CodeMirror Web API Implementation</a>
+    <div id="main">
+        @RenderBody()
+    </div>
 
-    @RenderBody()
 </body>
 </html>

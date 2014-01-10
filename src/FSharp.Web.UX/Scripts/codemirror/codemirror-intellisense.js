@@ -78,6 +78,19 @@ var Intellisense = function (editor, userCallback)
 	    el.className = classes.join(" ");
 	}
 
+	function lastIndexOfAny(str, arr, start)
+	{
+	    for (var i = 0; i < arr.length; i++)
+	    {
+	        var val = str.lastIndexOf(arr[i], start);
+	        if (val > -1)
+	        {
+	            return val;
+	        }
+	    }
+	    return -1;
+	}
+
 	var cssText = 
 ".br-intellisense {"+
 "    min-width: 220px;"+
@@ -261,11 +274,14 @@ var Intellisense = function (editor, userCallback)
     };
 
     // requests that the user provide items to display in the intellisense popup
-    self.autoComplete = function()
+    self.autoComplete = function ()
     {
-        if (typeof(userCallback) === 'function')
+        if (typeof (userCallback) === 'function')
         {
-            self.autoCompleteStart = editor.doc.getCursor();
+            var cursor = editor.doc.getCursor();
+            var line = editor.doc.getLine(cursor.line);
+            var find = lastIndexOfAny(line, ['.', ' ', '\t']) + 1;
+            self.autoCompleteStart = { line: cursor.line, ch: find };
             userCallback(self.callback, self.autoCompleteStart);
         }
     };
@@ -296,7 +312,7 @@ var Intellisense = function (editor, userCallback)
             self.filteredDeclarations = data;
 
             // refresh the DOM
-            self.refreshUI();
+            self.refreshFilter();
 
             // set the position of the popup
             var coords = editor.display.cursor.getBoundingClientRect();
@@ -329,7 +345,8 @@ var Intellisense = function (editor, userCallback)
         }
     }
 
-    self.refreshFilter = function()
+    // refresh the filter
+    self.refreshFilter = function ()
     {
 		var line = editor.doc.getLine(self.autoCompleteStart.line);
 		var filterText = line.substring(self.autoCompleteStart.ch, editor.getCursor().ch).toLowerCase()
@@ -371,6 +388,10 @@ var Intellisense = function (editor, userCallback)
 
 	var initialKeyMap =
 	{
+	    'Ctrl-Space': function(cm)
+	    {
+	        self.autoComplete();
+	    },
 		'.': function(cm)
 		{
 		    cm.replaceSelection('.', "end", "+input");
@@ -380,7 +401,7 @@ var Intellisense = function (editor, userCallback)
 		{
 		    cm.replaceSelection('(', "end", "+input");
 		    self.autoComplete();
-		},
+		}
 	};
 	
 	editor.addKeyMap(initialKeyMap);

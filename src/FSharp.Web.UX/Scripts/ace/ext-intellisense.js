@@ -194,14 +194,35 @@ ace.define('ace/intellisense',
                 self.refreshSelected();
             };
 
+            function lastIndexOfAny(str, arr, start)
+            {
+                for (var i = 0; i < arr.length; i++)
+                {
+                    var val = str.lastIndexOf(arr[i], start);
+                    if (val > -1)
+                    {
+                        return val;
+                    }
+                }
+                return -1;
+            }
+
             // requests that the user provide items to display in the intellisense popup
             self.autoComplete = function()
             {
                 if (typeof(userCallback) === 'function')
                 {
-                    self.autoCompleteStart = editor.getSelection().getCursor();
+                    var cursor = editor.getSelection().getCursor();
+                    var line = editor.getSession()
+                        .getDocument()
+                        .getLine(cursor.row);
+
+                    var find = lastIndexOfAny(line, ['.', ' ', '\t']) + 1;
+                    self.autoCompleteStart = { row: cursor.row, column: find };
                     userCallback(self.callback, self.autoCompleteStart);
+                    return true;
                 }
+                return false;
             };
 
             // show the auto complete and the documentation elements
@@ -212,32 +233,51 @@ ace.define('ace/intellisense',
                 self.documentationElement.style.display = b ? 'block' : 'none';
             };
 
+            self.refreshFilter = function ()
+            {
+                var line = editor.getSession()
+                    .getDocument()
+                    .getLine(self.autoCompleteStart.row);
+
+                // filter out bad results
+                var filterText = line.substring(self.autoCompleteStart.column, editor.getSelection().getCursor().column).toLowerCase();
+                self.filteredDeclarations = filter(self.declarations, function (x)
+                {
+                    return x.name.toLowerCase().indexOf(filterText) === 0;
+                });
+                self.selectedIndex = 0;
+                self.refreshUI();
+            };
+
             // this method is called by the end-user application
             self.callback = function(data)
             {
-                // set the data
-                self.declarations = data;
-                self.filteredDeclarations = data;
+                if (data.length > 0)
+                {
+                    // set the data
+                    self.declarations = data;
+                    self.filteredDeclarations = data;
 
-                // refresh the DOM
-                self.refreshUI();
+                    // refresh the DOM
+                    self.refreshFilter();
 
-                // set the position of the popup (magic number offsets can't figure out why)
-                var cursor = editor.selection.getCursor();
-                var coords = editor.renderer.textToScreenCoordinates(cursor.row, cursor.column);
-                var top = coords.pageY + 10;
-                var left = coords.pageX - 5;
+                    // set the position of the popup (magic number offsets can't figure out why)
+                    var cursor = editor.selection.getCursor();
+                    var coords = editor.renderer.textToScreenCoordinates(cursor.row, cursor.column);
+                    var top = coords.pageY + 10;
+                    var left = coords.pageX - 5;
 
-                // show the elements
-                self.showAutoComplete(true);
+                    // show the elements
+                    self.showAutoComplete(true);
 
-                // reposition intellisense
-                self.listElement.style.left = left + 'px';
-                self.listElement.style.top = top + 'px';
-                
-                // reposition documentation (magic number offsets can't figure out why)
-                self.documentationElement.style.left = (left + self.listElement.offsetWidth + 5) + 'px';
-                self.documentationElement.style.top = (top + 5) + 'px';
+                    // reposition intellisense
+                    self.listElement.style.left = left + 'px';
+                    self.listElement.style.top = top + 'px';
+
+                    // reposition documentation (magic number offsets can't figure out why)
+                    self.documentationElement.style.left = (left + self.listElement.offsetWidth + 5) + 'px';
+                    self.documentationElement.style.top = (top + 5) + 'px';
+                }
             };
 
             // moves the auto complete selection up or down a specified amount
@@ -264,7 +304,6 @@ ace.define('ace/intellisense',
                 if (e.command.name.indexOf('goto') === 0
                     || e.command.name.indexOf('select') === 0
                     || e.command.name.indexOf('removeword') === 0
-                    || e.command.name.indexOf('backspace') === 0
                     )
                 {
                     self.showAutoComplete(false);
@@ -274,26 +313,18 @@ ace.define('ace/intellisense',
                 {
                     self.autoComplete();
                 }
-                // show auto complete when parenthesis is pressed
-                else if (e.command.name === 'insertstring' && e.args === '(')
-                {
-                    self.autoComplete();
-                }
                 // update the filter for auto complete
                 else if (self.isAutoCompleteOpen && (e.command.name === 'insertstring' || e.command.name === 'backspace'))
                 {
-                    var line = editor.getSession()
-                        .getDocument()
-                        .getLine(self.autoCompleteStart.row);
-
-                    // filter out bad results
-                    var filterText = line.substring(self.autoCompleteStart.column, editor.getSelection().getCursor().column).toLowerCase();
-                    self.filteredDeclarations = filter(self.declarations, function (x)
+                    var cursor = editor.getSelection().getCursor();
+                    if (cursor.column < self.autoCompleteStart.column)
                     {
-                        return x.name.toLowerCase().indexOf(filterText) === 0;
-                    });
-                    self.selectedIndex = 0;
-                    self.refreshUI();
+                        self.showAutoComplete(false);
+                    }
+                    else
+                    {
+                        self.refreshFilter();
+                    }
                 }
             });
 
@@ -307,8 +338,9 @@ ace.define('ace/intellisense',
                 "PageUp": function (ed) { return self.moveAutoComplete(-5); },
                 "PageDown": function (ed) { return self.moveAutoComplete(5); },
                 "Enter": function (ed) { return self.insertAutoComplete(); },
-                "Tab": function (ed) { return self.insertAutoComplete(); }
-            }); 
+                "Tab": function (ed) { return self.insertAutoComplete(); },
+                "Ctrl+Space": function (ed) { return self.autoComplete(); }
+            });
             editor.keyBinding.addKeyboardHandler(self.keyboardHandler);
         };
 
