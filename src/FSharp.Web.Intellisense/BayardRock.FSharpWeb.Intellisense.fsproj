@@ -53,6 +53,7 @@
   <ItemGroup>
     <Compile Include="IntellisenseHelper.fs" />
     <None Include="Scratch.fsx" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="FSharp.Compiler.Service">
