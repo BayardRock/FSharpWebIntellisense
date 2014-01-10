@@ -169,12 +169,16 @@
   <ItemGroup>
     <Content Include="Content\class.png" />
     <Content Include="Content\codemirror.css" />
+    <Content Include="Content\delegate.png" />
     <Content Include="Content\delete.png" />
     <Content Include="Content\enum.png" />
+    <Content Include="Content\event.png" />
     <Content Include="Content\interface.png" />
     <Content Include="Content\method.png" />
     <Content Include="Content\namespace.png" />
     <Content Include="Content\property.png" />
+    <Content Include="Content\static-method.png" />
+    <Content Include="Content\static-property.png" />
     <Content Include="Content\struct.png" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
