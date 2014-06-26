@@ -31,9 +31,20 @@
             });
 
             // request declarations from the server
-            new Intellisense(editor, function (callback, position)
+            editor.intellisense = new Intellisense(editor, function (position, callback)
             {
                 var url = '/api/intellisense'
+                    + '?lineIndex=' + escape(position.line)
+                    + '&colIndex=' + escape(position.ch)
+                    + '&source=' + escape(editor.getValue());
+
+                $.getJSON(url, function (data)
+                {
+                    callback(data);
+                });
+            }, function (position, callback)
+            {
+                var url = '/api/methods'
                     + '?lineIndex=' + escape(position.line)
                     + '&colIndex=' + escape(position.ch)
                     + '&source=' + escape(editor.getValue());

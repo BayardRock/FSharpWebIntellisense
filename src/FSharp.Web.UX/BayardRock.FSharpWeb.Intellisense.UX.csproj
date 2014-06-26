@@ -158,6 +158,7 @@
     <Compile Include="Controllers\CodeMirrorController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\CompileController.cs" />
+    <Compile Include="Controllers\MethodsController.cs" />
     <Compile Include="Controllers\IntellisenseController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
