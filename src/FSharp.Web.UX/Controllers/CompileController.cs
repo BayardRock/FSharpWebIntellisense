@@ -7,16 +7,25 @@ namespace BayardRock.FSharpWeb.Intellisense.UX.Controllers
 {
     public class CompileController : ApiController
     {
-        public IEnumerable<ErrorInfo> Get(String source)
+        public class CompileRequest
+        {
+            public String Source { get; set; }
+        }
+
+        /// <summary>
+        /// Compiles the specified code and returns errors.
+        /// </summary>
+        /// <param name="req">The request</param>
+        public IEnumerable<ErrorInfo> Post(CompileRequest req)
         {
             // short circuit bad requests
-            if (String.IsNullOrEmpty(source))
+            if (String.IsNullOrEmpty(req.Source))
             {
                 return new List<ErrorInfo>();
             }
 
-            var parsed = IntellisenseHelper.Compile(source);
-            return parsed.Item2.Errors;
+            var c = WebApiApplication.Compiler.TypeCheck(req.Source, "/home/test.fsx");
+            return c.Check.Errors;
         }
     }
 }

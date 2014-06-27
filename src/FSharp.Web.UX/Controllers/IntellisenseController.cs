@@ -7,10 +7,21 @@ namespace BayardRock.FSharpWeb.Intellisense.UX.Controllers
 {
     public class IntellisenseController : ApiController
     {
-        public IEnumerable<IntellisenseItem> Get(String source, int lineIndex, int colIndex)
+        public class IntellisenseRequest
         {
-            return IntellisenseHelper.GetDeclarations(source, lineIndex, colIndex)
-                .Select(x => new IntellisenseItem(x))
+            public String Source { get; set; }
+            public int LineNumber { get; set; }
+            public int ColIndex { get; set; }
+        }
+
+        /// <summary>
+        /// Gets the intellisense declarations for the specified request.
+        /// </summary>
+        /// <param name="req">The request.</param>
+        public IEnumerable<SimpleDeclaration> Post(IntellisenseRequest req)
+        {
+            var decls = WebApiApplication.Compiler.GetDeclarations(req.Source, req.LineNumber, req.ColIndex);
+            return decls.Item2
                 .OrderBy(x => x.Name)
                 .ToList();
         }

@@ -14,13 +14,31 @@
     <script>
         $(function ()
         {
-            var interactiveSession = $.connection.interactiveSessionHub;
+            // setup the CodeMirror editor with fsharp mode
+            var editor = CodeMirror(document.getElementById('editor'),
+            {
+                value: "let x = 1",
+                mode: 'fsharp',
+                lineNumbers: true
+            });
+            editor.focus();
 
-            // this will be a reference to the callback that the intellisense provider is expecting
-            // to be called when declarations are sent from the server to the client, we need this because
-            // we are using signalr and not regular web api calls
-            var intellisenseCallback = null;
-            var compileCallback = null;
+            // request errors from the server
+            editor.compiler = new Compiler(editor, function ()
+            {
+                interactiveSession.server.compile(editor.getValue());
+            });
+
+            // request declarations from the server
+            editor.intellisense = new Intellisense(editor, function (position)
+            {
+                interactiveSession.server.getDeclarations(editor.getValue(), position.line + 1, position.ch);
+            }, function (position)
+            {
+                interactiveSession.server.getMethods(editor.getValue(), position.line + 1, position.ch - 1);
+            });
+
+            var interactiveSession = $.connection.interactiveSessionHub;
 
             // called by the server whenever intellisense declarations are ready
             interactiveSession.client.sendDeclarations = function (declarations)
@@ -31,8 +49,14 @@
                     {
                         return { name: item.Name, glyph: item.Glyph, documentation: item.Documentation };
                     });
-                    intellisenseCallback(newDeclarations);
+                    editor.intellisense.showDeclarations(newDeclarations);
                 }
+            };
+
+            // called by the server whenever intellisense declarations are ready
+            interactiveSession.client.sendMethods = function (methods)
+            {
+                editor.intellisense.showMethods(methods);
             };
 
             // called by the server whenever errors are ready
@@ -42,36 +66,14 @@
                 {
                     return { startLine: item.StartLine, startColumn: item.StartColumn, endLine: item.EndLine, endColumn: item.EndColumn, message: item.Message };
                 });
-                compileCallback(newErrors);
+                editor.compiler.updateMarkers(newErrors);
             };
 
+            // start signalr
             $.connection.hub.start()
                 .done(function (signalr)
                 {
                     console.log('done()', signalr);
-
-                    // setup the CodeMirror editor with fsharp mode
-                    var editor = CodeMirror(document.getElementById('editor'),
-                    {
-                        value: "let x = 1",
-                        mode: 'fsharp',
-                        lineNumbers: true
-                    });
-                    editor.focus();
-
-                    // request errors from the server
-                    new Compiler(editor, function (cb)
-                    {
-                        compileCallback = cb;
-                        interactiveSession.server.compile(editor.getValue());
-                    });
-
-                    // request declarations from the server
-                    new Intellisense(editor, function (cb, position)
-                    {
-                        intellisenseCallback = cb;
-                        interactiveSession.server.getDeclarations(editor.getValue(), position.line, position.ch);
-                    });
                 })
                 .fail(function (ex)
                 {

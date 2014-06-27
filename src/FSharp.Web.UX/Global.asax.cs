@@ -8,6 +8,8 @@ namespace BayardRock.FSharpWeb.Intellisense.UX
 {
     public class WebApiApplication : HttpApplication
     {
+        public static FsCompiler Compiler = new FsCompiler(".");
+
         protected void Application_Start()
         {
             AreaRegistration.RegisterAllAreas();

@@ -2,58 +2,94 @@ ace.define('ace/intellisense',
     ['require', 'exports', 'module', 'ace/keyboard/hash_handler'],
     function (require, exports, module)
     {
-        var cssText = 
-".br-intellisense {"+
-"    min-width: 220px;"+
-"    max-height: 176px;"+
-"    min-height: 22px;"+
-"    z-index: 10;"+
-"    padding: 0;"+
-"    overflow: auto;"+
-"    position: absolute;"+
-"    background-color: white;"+
-"    border: 1px solid #E5C365;"+
-"    box-shadow: 2px 3px 5px rgba(0, 0, 0, .2);"+
-"    padding: 0;"+
-"    margin: 5px;"+
-"    display: none;"+
-"}"+
-".br-documentation {"+
-"    min-width: 200px;"+
-"    padding: 3px;"+
-"    overflow: auto;"+
-"    position: absolute;"+
-"    z-index: 10;"+
-"    background-color: #E7E8EC;"+
-"    border: 1px solid #CCCEDB;"+
-"    box-shadow: 2px 3px 5px rgba(0,0,0,.2);"+
-"    font-family: 'Segoe UI';"+
-"    font-size: 10pt;"+
-"    white-space: pre-line;"+
-"    display: none;"+
-"}"+
-".br-listlink {"+
-"    font-family: 'Segoe UI';"+
-"    font-size: 10pt;"+
-"    list-style: none;"+
-"    cursor: pointer;"+
+        var cssText =
+".br-intellisense {" +
+"    min-width: 220px;" +
+"    max-height: 176px;" +
+"    min-height: 22px;" +
+"    z-index: 10;" +
+"    overflow: auto;" +
+"    position: absolute;" +
+"    background-color: white;" +
+"    border: 1px solid #E5C365;" +
+"    box-shadow: 2px 3px 5px rgba(0, 0, 0, .2);" +
+"    padding: 0;" +
+"    margin: 5px;" +
+"    display: none;" +
+"}" +
+".br-methods {" +
+"    min-width: 220px;" +
+"    min-height: 22px;" +
+"    z-index: 10;" +
+"    padding: 3px;" +
+"    overflow: auto;" +
+"    position: absolute;" +
+"    background-color: #E7E8EC;" +
+"    border: 1px solid #CCCEDB;" +
+"    margin: 5px;" +
+"    display: none;" +
+"    font-family: 'Segoe UI';" +
+"    font-size: 10pt;" +
+"}" +
+".br-methods-text {" +
+"    margin-left: 75px;" +
+"}" +
+".br-methods-arrows {" +
+"    width: 75px;" +
+"    float: left;" +
+"    font-family: Calibri;" +
+"    font-weight: bold;" +
+"    -webkit-touch-callout: none;" +
+"    -webkit-user-select: none;" +
+"    -khtml-user-select: none;" +
+"    -moz-user-select: none;" +
+"    -ms-user-select: none;" +
+"    user-select: none;" +
+"}" +
+".br-methods-arrow {" +
+"    cursor: pointer;" +
+"}" +
+".br-methods-arrow-text {" +
+"    font-weight: normal;" +
+"    margin-left: 2px;" +
+"    margin-right: 2px;" +
+"}" +
+".br-documentation {" +
+"    min-width: 200px;" +
+"    padding: 3px;" +
+"    overflow: auto;" +
+"    position: absolute;" +
+"    z-index: 10;" +
+"    background-color: #E7E8EC;" +
+"    border: 1px solid #CCCEDB;" +
+"    box-shadow: 2px 3px 5px rgba(0,0,0,.2);" +
+"    font-family: 'Segoe UI';" +
+"    font-size: 10pt;" +
+"    white-space: pre-line;" +
+"    display: none;" +
+"}" +
+".br-listlink {" +
+"    font-family: 'Segoe UI';" +
+"    font-size: 10pt;" +
+"    list-style: none;" +
+"    cursor: pointer;" +
 "    border: 1px solid white;" +
 "    white-space: nowrap;" +
 "    overflow: hidden;" +
-"}"+
-".br-listlink:hover {"+
-"    background-color: #FDF4BF;"+
-"}"+
-".br-selected {"+
-"    background-color: #FDF4BF;"+
-"    border: 1px dotted black;"+
-"}"+
-".br-icon {"+
-"    width: 16px;"+
-"    height: 16px;"+
-"    display: inline-block;"+
-"    vertical-align: text-top;"+
-"    margin: 2px;"+
+"}" +
+".br-listlink:hover {" +
+"    background-color: #FDF4BF;" +
+"}" +
+".br-selected {" +
+"    background-color: #FDF4BF;" +
+"    border: 1px dotted black;" +
+"}" +
+".br-icon {" +
+"    width: 16px;" +
+"    height: 16px;" +
+"    display: inline-block;" +
+"    vertical-align: text-top;" +
+"    margin: 2px;" +
 "}";
 
         var dom = require('ace/lib/dom');
@@ -67,20 +103,45 @@ ace.define('ace/intellisense',
             // data element
             self.selectedIndex = 0;
             self.isAutoCompleteOpen = false;
+            self.isMethodsOpen = false;
             self.filteredDeclarations = [];
             self.filteredDeclarationsUI = [];
             self.declarations = []
-            self.autoCompleteStart = { row: 0, column: 0 };
+            self.methods = []
+            self.methodsSelectedIndex = 0;
+            self.autoCompleteStart = { line: 0, column: 0 };
 
-            // ui widgets
-            self.selectedElement = null;
-            self.listElement = dom.createElement('ul');
-            self.listElement.className = 'br-intellisense';
-            
-            self.documentationElement = dom.createElement('div');
-            self.documentationElement.className = 'br-documentation';
+            // methods text
+            self.methodsTextElement = document.createElement('div');
+            self.methodsTextElement.className = 'br-methods-text';
+
+            // arrows
+            self.arrowsElement = document.createElement('div');
+            self.arrowsElement.className = 'br-methods-arrows';
+
+            // up arrow
+            self.upArrowElement = document.createElement('span');
+            self.upArrowElement.className = 'br-methods-arrow';
+            self.upArrowElement.innerHTML = '&#8593;';
+
+            // down arrow
+            self.downArrowElement = document.createElement('span');
+            self.downArrowElement.className = 'br-methods-arrow';
+            self.downArrowElement.innerHTML = '&#8595;';
+
+            // arrow text (1 of x)
+            self.arrowTextElement = document.createElement('span');
+            self.arrowTextElement.className = 'br-methods-arrow-text';
+
+            self.arrowsElement.appendChild(self.upArrowElement);
+            self.arrowsElement.appendChild(self.arrowTextElement);
+            self.arrowsElement.appendChild(self.downArrowElement);
+            self.methodsElement.appendChild(self.arrowsElement);
+            self.methodsElement.appendChild(self.methodsTextElement);
+
             document.body.appendChild(self.listElement);
             document.body.appendChild(self.documentationElement);
+            document.body.appendChild(self.methodsElement);
 
             // filters an array
             function filter(arr, cb)
@@ -219,10 +280,21 @@ ace.define('ace/intellisense',
 
                     var find = lastIndexOfAny(line, ['.', ' ', '\t']) + 1;
                     self.autoCompleteStart = { row: cursor.row, column: find };
-                    userCallback(self.callback, self.autoCompleteStart);
+                    userCallback(self.showDeclarations, self.autoCompleteStart);
                     return true;
                 }
                 return false;
+            };
+
+            // requests that the user provide items to display in the methods popup
+            self.autoCompleteMethods = function ()
+            {
+                if (typeof (methodsCallback) === 'function')
+                {
+                    var cursor = editor.getCursor();
+                    self.autoCompleteStart = { line: cursor.line, ch: cursor.ch };
+                    methodsCallback(self.autoCompleteStart, self.showMethods);
+                }
             };
 
             // show the auto complete and the documentation elements
@@ -231,6 +303,53 @@ ace.define('ace/intellisense',
                 self.isAutoCompleteOpen = b;
                 self.listElement.style.display = b ? 'block' : 'none';
                 self.documentationElement.style.display = b ? 'block' : 'none';
+            };
+
+            // show the methods UI
+            self.showMethodsUI = function (b)
+            {
+                self.isMethodsOpen = b;
+                self.methodsElement.style.display = b ? 'block' : 'none';
+            };
+
+            // sets the selected index of the methods
+            self.setSelectedMethodIndex = function (idx)
+            {
+                var disabledColor = '#808080';
+                var enabledColor = 'black';
+                if (idx < 0)
+                {
+                    idx = self.methods.length - 1;
+                }
+                else if (idx >= self.methods.length)
+                {
+                    idx = 0;
+                }
+
+                self.methodsSelectedIndex = idx;
+                self.methodsTextElement.innerHTML = self.methods[idx];
+                self.arrowTextElement.innerHTML = (idx + 1) + ' of ' + self.methods.length;
+            };
+
+            // this method is called by the end-user application to show method information
+            self.showMethods = function (data)
+            {
+                if (data != null && data.length > 0)
+                {
+                    // set the position of the popup
+                    var coords = editor.cursorCoords(true, 'page');
+                    self.methods = data;
+
+                    // show the elements
+                    self.showMethodsUI(true);
+
+                    // reposition intellisense
+                    self.methodsElement.style.left = coords.left + 'px';
+                    self.methodsElement.style.top = coords.bottom + 'px';
+
+                    // show the first item
+                    self.setSelectedMethodIndex(0);
+                }
             };
 
             self.refreshFilter = function ()
@@ -250,7 +369,7 @@ ace.define('ace/intellisense',
             };
 
             // this method is called by the end-user application
-            self.callback = function(data)
+            self.showDeclarations = function(data)
             {
                 if (data.length > 0)
                 {

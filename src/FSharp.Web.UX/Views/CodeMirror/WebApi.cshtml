@@ -21,10 +21,11 @@
             editor.focus();
 
             // request compilation information from the server
-            new Compiler(editor, function (callback)
+            editor.compiler = new Compiler(editor, function (callback)
             {
-                var url = '/api/compile?source=' + escape(editor.getValue());
-                $.getJSON(url, function (data)
+                var url = '/api/compile';
+                var postData = { source: editor.getValue() };
+                $.post(url, postData, function (data)
                 {
                     callback(data);
                 });
@@ -33,23 +34,17 @@
             // request declarations from the server
             editor.intellisense = new Intellisense(editor, function (position, callback)
             {
-                var url = '/api/intellisense'
-                    + '?lineIndex=' + escape(position.line)
-                    + '&colIndex=' + escape(position.ch)
-                    + '&source=' + escape(editor.getValue());
-
-                $.getJSON(url, function (data)
+                var url = '/api/intellisense';
+                var postData = { lineNumber: position.line + 1, colIndex: position.ch, source: editor.getValue() };
+                $.post(url, postData, function (data)
                 {
                     callback(data);
                 });
             }, function (position, callback)
             {
-                var url = '/api/methods'
-                    + '?lineIndex=' + escape(position.line)
-                    + '&colIndex=' + escape(position.ch)
-                    + '&source=' + escape(editor.getValue());
-
-                $.getJSON(url, function (data)
+                var url = '/api/methods';
+                var postData = { lineNumber: position.line + 1, colIndex: position.ch - 1, source: editor.getValue() };
+                $.post(url, postData, function (data)
                 {
                     callback(data);
                 });

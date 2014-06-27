@@ -7,17 +7,45 @@ namespace BayardRock.FSharpWeb.Intellisense.UX.Hubs
     public class InteractiveSessionHub : Hub
     {
         /// <summary>
+        /// Get the methods for the specified F# source code at the
+        /// specified line index and column index.
+        /// </summary>
+        /// <param name="source">The F# source code</param>
+        /// <param name="lineNumber">The line that the user is on</param>
+        /// <param name="colIndex">The column that the user is on</param>
+        public void GetMethods(String source, int lineNumber, int colIndex)
+        {
+            using (var c = new MethodsController())
+            {
+                var request = new MethodsController.MethodsRequest
+                {
+                    ColIndex = colIndex,
+                    LineNumber = lineNumber,
+                    Source = source
+                };
+                var methods = c.Post(request);
+                Clients.Caller.sendMethods(methods);
+            }
+        }
+
+        /// <summary>
         /// Get the declarations for the specified F# source code at the
         /// specified line index and column index.
         /// </summary>
         /// <param name="source">The F# source code</param>
-        /// <param name="lineIndex">The line that the user is on</param>
+        /// <param name="lineNumber">The line that the user is on</param>
         /// <param name="colIndex">The column that the user is on</param>
-        public void GetDeclarations(String source, int lineIndex, int colIndex)
+        public void GetDeclarations(String source, int lineNumber, int colIndex)
         {
             using (var c = new IntellisenseController())
             {
-                var declarations = c.Get(source, lineIndex, colIndex);
+                var request = new IntellisenseController.IntellisenseRequest
+                {
+                    ColIndex = colIndex,
+                    LineNumber = lineNumber,
+                    Source = source
+                };
+                var declarations = c.Post(request);
                 Clients.Caller.sendDeclarations(declarations);
             }
         }
@@ -30,7 +58,8 @@ namespace BayardRock.FSharpWeb.Intellisense.UX.Hubs
         {
             using (var c = new CompileController())
             {
-                var errors = c.Get(source);
+                var request = new CompileController.CompileRequest { Source = source };
+                var errors = c.Post(request);
                 Clients.Caller.sendErrors(errors);
             }
         }

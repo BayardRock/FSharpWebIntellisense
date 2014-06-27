@@ -111,24 +111,35 @@ var Intellisense = function (editor, userCallback, methodsCallback)
 "    padding: 3px;" +
 "    overflow: auto;" +
 "    position: absolute;" +
-"    background-color: #CCCEDB;" +
-"    border: 1px solid #E7E8EC;" +
+"    background-color: #E7E8EC;" +
+"    border: 1px solid #CCCEDB;" +
 "    margin: 5px;" +
 "    display: none;" +
 "    font-family: 'Segoe UI';" +
 "    font-size: 10pt;" +
 "}" +
+".br-methods-text {" +
+"    margin-left: 75px;" +
+"}" +
 ".br-methods-arrows {" +
-"    float: right;" +
+"    width: 75px;" +
+"    float: left;" +
 "    font-family: Calibri;" +
 "    font-weight: bold;" +
-"    cursor: pointer;" +
 "    -webkit-touch-callout: none;" +
 "    -webkit-user-select: none;" +
 "    -khtml-user-select: none;" +
 "    -moz-user-select: none;" +
 "    -ms-user-select: none;" +
 "    user-select: none;" +
+"}" +
+".br-methods-arrow {" +
+"    cursor: pointer;" +
+"}" +
+".br-methods-arrow-text {" +
+"    font-weight: normal;" +
+"    margin-left: 2px;" +
+"    margin-right: 2px;" +
 "}" +
 ".br-documentation {" +
 "    min-width: 200px;" +
@@ -197,6 +208,7 @@ var Intellisense = function (editor, userCallback, methodsCallback)
 
     // methods text
     self.methodsTextElement = document.createElement('div');
+    self.methodsTextElement.className = 'br-methods-text';
 
     // arrows
     self.arrowsElement = document.createElement('div');
@@ -204,13 +216,20 @@ var Intellisense = function (editor, userCallback, methodsCallback)
 
     // up arrow
     self.upArrowElement = document.createElement('span');
+    self.upArrowElement.className = 'br-methods-arrow';
     self.upArrowElement.innerHTML = '&#8593;';
 
     // down arrow
     self.downArrowElement = document.createElement('span');
+    self.downArrowElement.className = 'br-methods-arrow';
     self.downArrowElement.innerHTML = '&#8595;';
 
+    // arrow text (1 of x)
+    self.arrowTextElement = document.createElement('span');
+    self.arrowTextElement.className = 'br-methods-arrow-text';
+
     self.arrowsElement.appendChild(self.upArrowElement);
+    self.arrowsElement.appendChild(self.arrowTextElement);
     self.arrowsElement.appendChild(self.downArrowElement);
     self.methodsElement.appendChild(self.arrowsElement);
     self.methodsElement.appendChild(self.methodsTextElement);
@@ -375,19 +394,18 @@ var Intellisense = function (editor, userCallback, methodsCallback)
     {
         var disabledColor = '#808080';
         var enabledColor = 'black';
+        if (idx < 0)
+        {
+            idx = self.methods.length - 1;
+        }
+        else if (idx >= self.methods.length)
+        {
+            idx = 0;
+        }
 
-        idx = Math.max(idx, 0);
-        idx = Math.min(idx, self.methods.length - 1);
         self.methodsSelectedIndex = idx;
         self.methodsTextElement.innerHTML = self.methods[idx];
-
-        self.upArrowElement.style.color = (idx === 0)
-            ? disabledColor
-            : enabledColor;
-
-        self.downArrowElement.style.color = (idx === self.methods.length - 1)
-            ? disabledColor
-            : enabledColor;
+        self.arrowTextElement.innerHTML = (idx + 1) + ' of ' + self.methods.length;
     };
 
     // this method is called by the end-user application to show method information
@@ -450,7 +468,6 @@ var Intellisense = function (editor, userCallback, methodsCallback)
     {
         if (self.isAutoCompleteOpen)
         {
-            // apply the new selected index
             self.selectedIndex = self.selectedIndex + delta;
             self.selectedIndex = Math.max(self.selectedIndex, 0);
             self.selectedIndex = Math.min(self.selectedIndex, self.filteredDeclarations.length - 1);

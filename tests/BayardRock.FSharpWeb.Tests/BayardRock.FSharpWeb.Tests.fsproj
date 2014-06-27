@@ -9,11 +9,12 @@
     <OutputType>Library</OutputType>
     <RootNamespace>BayardRock.FSharpWeb.Tests</RootNamespace>
     <AssemblyName>BayardRock.FSharpWeb.Tests</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <TargetFSharpCoreVersion>4.3.0.0</TargetFSharpCoreVersion>
     <Name>BayardRock.FSharpWeb.Tests</Name>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\</SolutionDir>
     <RestorePackages>true</RestorePackages>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -35,6 +36,10 @@
     <DocumentationFile>bin\Release\BayardRock.FSharpWeb.Tests.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="FSharp.Compiler.Service">
+      <HintPath>..\..\packages\FSharp.Compiler.Service.0.0.57\lib\net45\FSharp.Compiler.Service.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="FsUnit.NUnit">
       <HintPath>..\..\packages\FsUnit.1.2.1.0\Lib\Net40\FsUnit.NUnit.dll</HintPath>
       <Private>True</Private>
