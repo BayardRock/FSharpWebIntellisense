@@ -5,6 +5,8 @@
 
 @section scripts
 {
+   
+    <script src="~/Scripts/intellisense.js"></script>
     <script src="~/scripts/codemirror/codemirror.js"></script>
     <script src="~/scripts/codemirror/codemirror-intellisense.js"></script>
     <script src="~/scripts/codemirror/codemirror-compiler.js"></script>
@@ -32,10 +34,10 @@
             // request declarations from the server
             editor.intellisense = new Intellisense(editor, function (position)
             {
-                interactiveSession.server.getDeclarations(editor.getValue(), position.line + 1, position.ch);
+                interactiveSession.server.getDeclarations(editor.getValue(), position.lineIndex + 1, position.columnIndex);
             }, function (position)
             {
-                interactiveSession.server.getMethods(editor.getValue(), position.line + 1, position.ch - 1);
+                interactiveSession.server.getMethods(editor.getValue(), position.lineIndex + 1, position.columnIndex - 2);
             });
 
             var interactiveSession = $.connection.interactiveSessionHub;
@@ -49,14 +51,14 @@
                     {
                         return { name: item.Name, glyph: item.Glyph, documentation: item.Documentation };
                     });
-                    editor.intellisense.showDeclarations(newDeclarations);
+                    editor.intellisense.setDeclarations(newDeclarations);
                 }
             };
 
             // called by the server whenever intellisense declarations are ready
             interactiveSession.client.sendMethods = function (methods)
             {
-                editor.intellisense.showMethods(methods);
+                editor.intellisense.setMethods(methods);
             };
 
             // called by the server whenever errors are ready

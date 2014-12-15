@@ -30,10 +30,18 @@
             });
 
             // request declarations from the server
-            editor.intellisense = new Intellisense(editor, function (callback, position)
+            editor.intellisense = new Intellisense(editor, function (position, callback)
             {
                 var url = '/api/intellisense';
-                var postData = { lineNumber: position.row + 1, colIndex: position.column, source: editor.getValue() };
+                var postData = { lineNumber: position.lineIndex + 1, colIndex: position.columnIndex, source: editor.getValue() };
+                $.post(url, postData, function (data)
+                {
+                    callback(data);
+                });
+            }, function (position, callback)
+            {
+                var url = '/api/methods';
+                var postData = { lineNumber: position.lineIndex + 1, colIndex: position.columnIndex - 2, source: editor.getValue() };
                 $.post(url, postData, function (data)
                 {
                     callback(data);

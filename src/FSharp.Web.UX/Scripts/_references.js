@@ -9,3 +9,4 @@
 /// <reference path="ace/mode-fsharp.js" />
 /// <reference path="ace/mode-javascript.js" />
 /// <reference path="ace/mode-sql.js" />
+/// <reference path="intellisense.js" />

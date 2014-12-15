@@ -11,13 +11,31 @@
     <script>
         $(function ()
         {
-            var interactiveSession = $.connection.interactiveSessionHub;
+            // setup the ACE editor with fsharp mode
+            var editor = ace.edit('editor');
+            editor.getSession().setMode("ace/mode/fsharp");
+            editor.focus();
 
-            // this will be a reference to the callback that the intellisense provider is expecting
-            // to be called when declarations are sent from the server to the client, we need this because
-            // we are using signalr and not regular web api calls
-            var intellisenseCallback = null;
-            var compileCallback = null;
+            // get an instance of the Intellisense object
+            var Intellisense = ace.require('ace/intellisense').Intellisense;
+            var Compiler = ace.require('ace/compiler').Compiler;
+
+            // request errors from the server
+            editor.compiler = new Compiler(editor, function (cb)
+            {
+                interactiveSession.server.compile(editor.getValue());
+            });
+
+            // request declarations from the server
+            editor.intellisense = new Intellisense(editor, function (position)
+            {
+                interactiveSession.server.getDeclarations(editor.getValue(), position.lineIndex + 1, position.columnIndex);
+            }, function (position)
+            {
+                interactiveSession.server.getMethods(editor.getValue(), position.lineIndex + 1, position.columnIndex - 2);
+            });
+
+            var interactiveSession = $.connection.interactiveSessionHub;
 
             // called by the server whenever intellisense declarations are ready
             interactiveSession.client.sendDeclarations = function (declarations)
@@ -28,7 +46,7 @@
                     {
                         return { name: item.Name, glyph: item.Glyph, documentation: item.Documentation };
                     });
-                    intellisenseCallback(newDeclarations);
+                    editor.intellisense.setDeclarations(newDeclarations);
                 }
             };
 
@@ -39,36 +57,21 @@
                 {
                     return { startLine: item.StartLine, startColumn: item.StartColumn, endLine: item.EndLine, endColumn: item.EndColumn, message: item.Message };
                 });
-                compileCallback(newErrors);
+                editor.compiler.updateMarkers(newErrors);
+            };
+
+            // called by the server whenever intellisense declarations are ready
+            interactiveSession.client.sendMethods = function (methods)
+            {
+                editor.intellisense.setMethods(methods);
             };
 
             $.connection.hub.start()
-                .done(function()
+                .done(function(signalr)
                 {
-                    // setup the ACE editor with fsharp mode
-                    var editor = ace.edit('editor');
-                    editor.getSession().setMode("ace/mode/fsharp");
-                    editor.focus();
-
-                    // get an instance of the Intellisense object
-                    var Intellisense = ace.require('ace/intellisense').Intellisense;
-                    var Compiler = ace.require('ace/compiler').Compiler;
-
-                    // request errors from the server
-                    new Compiler(editor, function (cb)
-                    {
-                        compileCallback = cb;
-                        interactiveSession.server.compile(editor.getValue());
-                    });
-
-                    // request declarations from the server
-                    new Intellisense(editor, function (cb, position)
-                    {
-                        intellisenseCallback = cb;
-                        interactiveSession.server.getDeclarations(editor.getValue(), position.row, position.column);
-                    });
+                    console.log('done()', signalr);
                 })
-                .fail(function (ex)
+                .fail(function(ex)
                 {
                     alert('Unable to connect to signalr: ' + ex.message)
                 });

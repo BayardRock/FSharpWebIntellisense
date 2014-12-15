@@ -66,7 +66,6 @@ ace.define('ace/compiler',
 
         exports.Compiler = function (editor, userCallback)
         {
-            var i = editor.compiler || new Compiler(editor, userCallback);
-            editor.compiler = i;
+            return new Compiler(editor, userCallback);
         };
     });
